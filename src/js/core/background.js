@@ -1,6 +1,3 @@
-// Interactive ambient background: drifting particles, soft connections, and a
-// light trail that follows the pointer. Pauses when the tab is hidden and
-// renders a single static frame when the user prefers reduced motion.
 import { prefersReducedMotion } from './util.js';
 
 const COLORS = ['196,181,253', '34,211,238', '244,114,182', '168,85,247'];
@@ -13,10 +10,17 @@ export function initBackground(canvas) {
   const trail = [];
 
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    w = window.innerWidth; h = window.innerHeight;
-    canvas.width = w * dpr; canvas.height = h * dpr;
+    dpr = window.devicePixelRatio || 1;
+    w = window.innerWidth; 
+    h = window.innerHeight;
+    
+    canvas.width = w * dpr; 
+    canvas.height = h * dpr;
+    canvas.style.width = `${w}px`;
+    canvas.style.height = `${h}px`;
+    
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    
     const count = Math.round(Math.min(70, Math.max(22, (w * h) / 24000)));
     particles = Array.from({ length: count }, () => ({
       x: Math.random() * w, y: Math.random() * h,
@@ -54,7 +58,6 @@ export function initBackground(canvas) {
         }
       }
     }
-    // pointer light trail
     if (!reduce && trail.length > 1) {
       for (let i = 1; i < trail.length; i++) {
         const k = i / trail.length;

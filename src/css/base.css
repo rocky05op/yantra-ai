@@ -260,3 +260,8 @@ html.js [data-reveal].is-in { opacity: 1; transform: none; }
   .card { transform: none !important; }
 }
 [hidden] { display: none !important; }
+canvas { image-rendering: crisp-edges; transform: translateZ(0); }
+canvas {
+    image-rendering: crisp-edges;
+    transform: translateZ(0); 
+}
