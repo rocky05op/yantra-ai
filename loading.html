@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YANTRA — Loading</title>
+  <meta name="theme-color" content="#060311" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/base.css" />
+  <link rel="stylesheet" href="/src/css/loading.css" />
+</head>
+<body data-page="loading">
+  <main class="loading page">
+    <div class="loader">
+      <div class="loader-ring" aria-hidden="true"></div>
+      <canvas id="loadingCanvas" aria-hidden="true"></canvas>
+    </div>
+    <h1 class="loader-title display gradient-text">YANTRA</h1>
+    <p class="loader-sub" id="loaderMsg" aria-live="polite">Initializing creative power…</p>
+    <div class="loader-bar" role="progressbar" aria-label="Loading" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span id="loaderFill"></span></div>
+    <a class="loader-skip" href="landing.html">Skip intro <i data-icon="arrowRight" data-size="16"></i></a>
+  </main>
+  <script type="module" src="/src/js/pages/loading.js"></script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "yantra",
+  "version": "1.0.0",
+  "description": "YANTRA is an interactive web application for creating beautiful, sacred geometric patterns with AI-powered precision and real-time visualization.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "vite --open /loading.html",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}
