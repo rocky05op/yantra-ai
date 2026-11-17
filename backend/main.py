@@ -1,7 +1,7 @@
 from fastapi import FastAPI, File, Form, HTTPException, Response, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 
-from security import (
+from .security import (
     ALLOWED_ASPECT_RATIOS,
     ALLOWED_RESOLUTIONS,
     ALLOWED_STYLES,
@@ -9,7 +9,8 @@ from security import (
     validate_and_sanitize_text,
     verify_uploaded_reference,
 )
-from ai_engine import generate_artwork_pipeline
+
+from .ai_engine import generate_artwork_pipeline
 
 app = FastAPI(
     title="YANTRA — Hardened GenAI Studio Backend",
@@ -18,6 +19,8 @@ app = FastAPI(
 )
 
 # 1. Strict CORS Configuration (Allows Vite Localhost & Vercel Previews)
+app.add_middleware(YantraSecurityMiddleware)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
@@ -28,7 +31,7 @@ app.add_middleware(
     ],
     allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -62,9 +65,21 @@ async def generate_image_endpoint(
     negative_prompt: str | None = Form(None, description="Optional negative prompt (<= 300 chars)"),
     aspect_ratio: str | None = Form("1:1", description="Target aspect ratio"),
     resolution: str | None = Form("1024", description="Target long-side resolution"),
+    generation_mode: str = Form("prompt"),
     reference: UploadFile | None = File(None, description="Optional reference or flattened sketch image"),
     sketch: UploadFile | None = File(None, description="Legacy fallback field if sent"),
 ):
+    # Validate generation mode
+    generation_mode = (
+        generation_mode or "prompt"
+    ).strip().lower()
+
+    if generation_mode not in {"prompt", "sketch"}:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid generation mode."
+        )
+
     # Step 1: Sanitize & validate text inputs against Prompt Injection / XSS
     clean_prompt = validate_and_sanitize_text(prompt, "prompt", max_len=500)
     if not clean_prompt:
@@ -94,7 +109,13 @@ async def generate_image_endpoint(
 
     # Step 2: Cryptographically verify uploaded reference/sketch image (Magic Bytes + 15MB cap)
     upload_target = reference or sketch
+
     ref_bytes = await verify_uploaded_reference(upload_target)
+    if generation_mode == "sketch" and not ref_bytes:
+        raise HTTPException(
+            status_code=400,
+            detail="Sketch image is required."
+        )
 
     # Step 3: Execute AI Generation Pipeline
     image_bytes, engine_used = await generate_artwork_pipeline(
@@ -105,6 +126,7 @@ async def generate_image_endpoint(
         resolution=clean_res,
         reference_bytes=ref_bytes,
         sketch_influence=influence_val,
+        generation_mode=generation_mode,
     )
 
     # Step 4: Stream binary PNG directly (Matches aiClient.js `type.startsWith('image/')` contract!)

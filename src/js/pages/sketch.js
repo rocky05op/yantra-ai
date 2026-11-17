@@ -10,15 +10,33 @@ import { STYLES, isBackendConfigured, generateImage, describeRequest, BackendNot
 initShell();
 const $ = (id) => document.getElementById(id);
 const reduce = prefersReducedMotion();
-const W = 1024, H = 768, MAX_UNDO = 40;
-const bg = $('bg'), draw = $('draw'), bgc = bg.getContext('2d'), ctx = draw.getContext('2d', { willReadFrequently: true });
+const W = 1024 , H = 768 , MAX_UNDO = 40;
+const bg = $('bg');
+const draw = $('draw');
+const bgc = bg.getContext('2d');
+const ctx = draw.getContext('2d');
 [bg, draw].forEach((c) => { c.width = W; c.height = H; });
-const state = { tool: 'brush', style: 'none', image: null, undo: [], redo: [], drawing: false, last: null, running: false, abort: null, current: null, timers: [] };
+const state = {
+  tool: 'brush',
+  style: 'none',
+  image: null,
+  undo: [],
+  redo: [],
+  drawing: false,
+  last: null,
+  mid: null,
+  pendingPoints: [],
+  drawFrame: 0,
+  running: false,
+  abort: null,
+  current: null,
+  timers: []
+};
 
 /* ---------- ambient particles (same markup as Prompt to Image) ---------- */
 const colors = ['#c4b5fd', '#22d3ee', '#f472b6', '#a855f7', '#e9d5ff'], rnd = (a, b) => a + Math.random() * (b - a);
 function particles(host, n) { for (let i = 0; i < n; i++) { const p = document.createElement('i'), t = rnd(8, 18); p.style.cssText = `--x:${rnd(2, 98).toFixed(1)}%;--s:${rnd(2, 6).toFixed(1)}px;--t:${t.toFixed(1)}s;--dl:${(-rnd(0, t)).toFixed(1)}s;--dx:${rnd(-40, 40).toFixed(0)}px;--c:${colors[i % 5]}`; host.appendChild(p); } }
-particles($('headParticles'), 14); particles($('stageParticles'), 22);
+/* particles($('headParticles'), 14); particles($('stageParticles'), 22); */
 
 /* ---------- canvas ---------- */
 function paintBg() {
@@ -46,27 +64,127 @@ const size = $('size'); size.addEventListener('input', () => { $('sizeVal').text
 $('swatches').innerHTML = ['#1a1033', '#ffffff', '#ef4444', '#f59e0b', '#22c55e', '#22d3ee', '#8b5cf6', '#f472b6'].map((c) => `<button type="button" style="--c:${c}" data-c="${c}" aria-label="Colour ${c}"></button>`).join('');
 $('swatches').addEventListener('click', (e) => { const b = e.target.closest('[data-c]'); if (b) { $('color').value = b.dataset.c; setTool('brush'); } });
 
-const pos = (e) => { const r = draw.getBoundingClientRect(); return { x: ((e.clientX - r.left) / r.width) * W, y: ((e.clientY - r.top) / r.height) * H, r }; };
-function style() { ctx.lineCap = ctx.lineJoin = 'round'; ctx.lineWidth = +size.value; ctx.globalCompositeOperation = state.tool === 'eraser' ? 'destination-out' : 'source-over'; ctx.strokeStyle = ctx.fillStyle = $('color').value; }
+
+const pos = (e, r = draw.getBoundingClientRect()) => ({
+  x: ((e.clientX - r.left) / r.width) * W,
+  y: ((e.clientY - r.top) / r.height) * H,
+  r
+});
+
+function style() {
+  ctx.lineCap = ctx.lineJoin = 'round';
+  ctx.lineWidth = +size.value;
+  ctx.globalCompositeOperation =
+    state.tool === 'eraser' ? 'destination-out' : 'source-over';
+  ctx.strokeStyle = ctx.fillStyle = $('color').value;
+}
+
+draw.style.touchAction = 'none';
+
+
+function flushDrawQueue() {
+  if (state.drawFrame) {
+    cancelAnimationFrame(state.drawFrame);
+    state.drawFrame = 0;
+  }
+
+  if (!state.pendingPoints.length || !state.drawing) {
+    state.pendingPoints = [];
+    return;
+  }
+
+  ctx.stroke();
+}
+
+
+  const points = state.pendingPoints;
+  state.pendingPoints = [];
+
+  for (const q of points) {
+    const m = {
+      x: (state.last.x + q.x) / 2,
+      y: (state.last.y + q.y) / 2
+    };
+
+    ctx.beginPath();
+    ctx.moveTo(state.mid.x, state.mid.y);
+    ctx.quadraticCurveTo(
+      state.last.x,
+      state.last.y,
+      m.x,
+      m.y
+    );
+    ctx.stroke();
+
+    state.last = q;
+    state.mid = m;
+  }
+
+function scheduleDraw() {
+  if (state.drawFrame) return;
+
+  state.drawFrame = requestAnimationFrame(flushDrawQueue);
+}
+
 draw.addEventListener('pointerdown', (e) => {
   if (e.button !== 0 && e.pointerType === 'mouse') return;
-  e.preventDefault(); draw.setPointerCapture(e.pointerId); pushUndo(); style();
-  const p = pos(e); state.drawing = true; state.last = p; state.mid = p;
-  ctx.beginPath(); ctx.arc(p.x, p.y, ctx.lineWidth / 2, 0, 6.2832); ctx.fill();
+  state.rect = draw.getBoundingClientRect();
+  e.preventDefault();
+  draw.setPointerCapture(e.pointerId);
+
+  pushUndo();
+  style();
+
+  const p = pos(e, state.rect);
+
+  state.drawing = true;
+  state.last = { x: p.x, y: p.y };
+  state.mid = { x: p.x, y: p.y };
+  state.pendingPoints = [];
+
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+  ctx.fill();
 });
+
 draw.addEventListener('pointermove', (e) => {
-  const p = pos(e), c = $('cursor'), d = (+size.value / W) * p.r.width;
-  c.style.width = c.style.height = `${d}px`; c.style.transform = `translate(${p.x / W * p.r.width - d / 2}px, ${p.y / H * p.r.height - d / 2}px)`;
-  if (!state.drawing) return;
-  const evs = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
-  for (const ev of evs.length ? evs : [e]) {
-    const q = pos(ev), m = { x: (state.last.x + q.x) / 2, y: (state.last.y + q.y) / 2 };
-    ctx.beginPath(); ctx.moveTo(state.mid.x, state.mid.y); ctx.quadraticCurveTo(state.last.x, state.last.y, m.x, m.y); ctx.stroke();
-    state.last = q; state.mid = m;
+  const r = state.rect || draw.getBoundingClientRect();
+  const p = pos(e, r);
+
+  // Update cursor only when not drawing
+const c = $('cursor');
+const d = (+size.value / W) * r.width;
+
+c.style.width = c.style.height = `${d}px`;
+c.style.transform =
+  `translate(${p.x / W * r.width - d / 2}px, ${p.y / H * r.height - d / 2}px)`;
+
+  if (!state.drawing || !state.last) return;
+
+  const events = e.getCoalescedEvents?.();
+  const points = events?.length ? events : [e];
+
+  ctx.beginPath();
+  ctx.moveTo(state.last.x, state.last.y);
+
+  for (const ev of points) {
+    const q = pos(ev, r);
+    ctx.lineTo(q.x, q.y);
+    state.last = { x: q.x, y: q.y };
   }
+
+  ctx.stroke();
 });
-const end = () => { state.drawing = false; };
-['pointerup', 'pointercancel', 'lostpointercapture'].forEach((t) => draw.addEventListener(t, end));
+const end = () => {
+  flushDrawQueue();
+  state.drawing = false;
+  state.last = null;
+  state.mid = null;
+};
+
+['pointerup', 'pointercancel', 'lostpointercapture'].forEach((event) => {
+  draw.addEventListener(event, end);
+});
 
 /* ---------- image upload ---------- */
 const dz = $('dropzone');
@@ -137,7 +255,7 @@ $('form').addEventListener('submit', async (e) => {
   if (innerWidth <= 1100) card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
   try {
     const blob = await exportSketch();
-    const out = await generateImage({ prompt: text, style: state.style, reference: new File([blob], 'sketch.png', { type: 'image/png' }), influence: +$('influence').value, signal: state.abort.signal });
+    const out = await generateImage({ prompt: text, style: state.style, reference: new File([blob], 'sketch.png', { type: 'image/png' }), influence: +$('influence').value, generationMode: 'sketch',signal: state.abort.signal ,});
     const img = $('resultImg');
     await new Promise((r) => { img.onload = r; img.onerror = r; img.src = out.url; });
     if (!img.naturalWidth) throw new Error('The backend returned something that is not a readable image.');

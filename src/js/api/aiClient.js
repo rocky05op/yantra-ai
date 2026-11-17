@@ -61,11 +61,11 @@ export const RESOLUTIONS = ['512', '768', '1024', '2048'];
  *          negativePrompt?:string, aspectRatio?:string, resolution?:string, signal?:AbortSignal}} req
  * @returns {Promise<{url:string, blob?:Blob}>}  an image URL (object URL, data URL or remote URL)
  */
-export async function generateImage({ prompt, style, reference, influence, negativePrompt, aspectRatio, resolution, signal }) {
+export async function generateImage({  prompt,style,reference, influence, negativePrompt, aspectRatio, resolution, signal, generationMode = 'prompt' }) {
   if (!isBackendConfigured()) throw new BackendNotConfiguredError();
 
-  const form = buildForm({ prompt, style, reference, influence, negativePrompt, aspectRatio, resolution });
-  
+  const form = buildForm({  prompt, style, reference, influence, negativePrompt, aspectRatio, resolution, generationMode});
+
   // ✔️ Cache-busting logic added here so the browser NEVER shows the old image on Regenerate
   const bustUrl = `${GENERATE_URL}${GENERATE_URL.includes('?') ? '&' : '?'}t=${Date.now()}`;
   const res = await fetch(bustUrl, { method: 'POST', body: form, signal, cache: 'no-store' });
@@ -88,15 +88,40 @@ export async function generateImage({ prompt, style, reference, influence, negat
 }
 
 /** The single place that decides which fields are sent. */
-function fields({ prompt, style, reference, influence, negativePrompt, aspectRatio, resolution }) {
-  const f = [['prompt', prompt], ['style', style]];
+function fields({
+  prompt,
+  style,
+  reference,
+  influence,
+  negativePrompt,
+  aspectRatio,
+  resolution,
+  generationMode = 'prompt'
+}) {
+  const f = [
+    ['prompt', prompt],
+    ['style', style],
+    ['generation_mode', generationMode]
+  ];
+
   if (CAPABILITIES.reference && reference) {
-    // `sketch_influence` is the existing field name — kept so the backend needs no change.
-    if (CAPABILITIES.referenceInfluence && influence != null) f.push(['sketch_influence', String(influence)]);
+    if (CAPABILITIES.referenceInfluence && influence != null) {
+      f.push(['sketch_influence', String(influence)]);
+    }
   }
-  if (CAPABILITIES.negativePrompt && negativePrompt) f.push(['negative_prompt', negativePrompt]);
-  if (CAPABILITIES.aspectRatio && aspectRatio) f.push(['aspect_ratio', aspectRatio]);
-  if (CAPABILITIES.resolution && resolution) f.push(['resolution', resolution]);
+
+  if (CAPABILITIES.negativePrompt && negativePrompt) {
+    f.push(['negative_prompt', negativePrompt]);
+  }
+
+  if (CAPABILITIES.aspectRatio && aspectRatio) {
+    f.push(['aspect_ratio', aspectRatio]);
+  }
+
+  if (CAPABILITIES.resolution && resolution) {
+    f.push(['resolution', resolution]);
+  }
+
   return f;
 }
 
