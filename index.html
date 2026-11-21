@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YANTRA — Pattern Studio</title>
+  <meta name="description" content="Real-time sacred geometric pattern generator." />
+  <meta name="theme-color" content="#090812" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script>
+  /* Entry-point guard: a fresh open or reload shows the YANTRA loading screen first. In-app links, back/forward and
+     the loader's own redirect carry a short-lived session flag, so this can never loop. Storage blocked => no redirect. */
+  (function () {
+    try {
+      var nav = performance.getEntriesByType('navigation')[0], type = nav && nav.type;
+      var ts = parseInt(sessionStorage.getItem('yantra:nav') || '0', 10);
+      sessionStorage.removeItem('yantra:nav');
+      var internal = ts && Date.now() - ts < 6000;
+      if (type === 'back_forward' || (internal && type !== 'reload') || /[?&]noload\b/.test(location.search)) return;
+      document.documentElement.style.visibility = 'hidden';
+      location.replace('loading.html?next=index.html');
+    } catch (e) { /* never block the page */ }
+  })();
+</script>
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/base.css" />
+  <link rel="stylesheet" href="/src/css/brand.css" />
+  <link rel="stylesheet" href="/src/css/studio.css" />
+</head>
+<body data-page="pattern" data-brand>
+  <div id="nav-root"></div>
+
+  <main class="page has-nav studio-page">
+    <header class="studio-head">
+      <div>
+        <span class="y-title">YANTRA AI · Pattern Studio</span>
+        <h1 class="display">Where Indian Heritage Meets <em class="gradient-text">Artificial Intelligence</em></h1>
+      </div>
+      <button class="btn-icon" id="autoSaveToggle" type="button" title="Auto-save your settings in this browser" aria-pressed="true" aria-label="Auto-save"><i data-icon="save" data-size="19"></i></button>
+    </header>
+
+    <div class="studio">
+      <!-- Left: library -->
+      <aside class="y-panel panel library" aria-label="Pattern library">
+        <input type="search" id="presetSearch" class="search" placeholder="Search patterns…" aria-label="Search patterns" autocomplete="off" />
+        <div class="chips" id="presetCats" role="radiogroup" aria-label="Pattern categories"></div>
+        <section><h2 class="y-title">Favorites</h2><div class="strip" id="favList"></div></section>
+        <section><h2 class="y-title">Recently used</h2><div class="strip" id="recentList"></div></section>
+        <section><h2 class="y-title">Preset gallery</h2><div id="presetGallery"></div>
+</section>
+      </aside>
+
+      <!-- Centre: canvas -->
+      <section class="stage" aria-label="Pattern canvas">
+        <div class="canvas-container y-panel" id="canvasBox">
+          <canvas id="yantracCanvas" aria-label="Generated yantra pattern" role="img"></canvas>
+          <div class="view-tools" role="toolbar" aria-label="Canvas view">
+            <button class="btn-icon" id="zoomOutBtn" type="button" title="Zoom out" aria-label="Zoom out">−</button>
+            <span class="zoom-val" id="zoomValue" aria-live="polite">100%</span>
+            <button class="btn-icon" id="zoomInBtn" type="button" title="Zoom in" aria-label="Zoom in">+</button>
+            <button class="btn-icon txt" id="fitBtn" type="button" title="Fit to screen (100%) · double-click canvas" aria-label="Fit to screen">Fit</button>
+            <button class="btn-icon txt" id="gridBtn" type="button" title="Toggle grid" aria-label="Toggle grid" aria-pressed="false">Grid</button>
+            <button class="btn-icon" id="fullscreenBtn" type="button" title="Fullscreen" aria-label="Fullscreen" aria-pressed="false"><i data-icon="maximize" data-size="18"></i></button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Right: inspector -->
+      <aside class="y-panel panel inspector" aria-label="Pattern inspector">
+        <section class="group">
+          <h2 class="y-title">Shape</h2>
+          <div class="field"><label for="symmetrySlider">Symmetry <span class="val" id="symmetryValue">6</span></label>
+          <input type="range" id="symmetrySlider" min="2" max="12" value="6" /></div>
+          <div class="field"><label for="rotationSlider">Rotation <span class="val" id="rotationValue">0°</span></label>
+          <input type="range" id="rotationSlider" min="0" max="360" value="0" /></div>
+          <div class="field"><label for="scaleSlider">Scale <span class="val" id="scaleValue">1.0x</span></label>
+          <input type="range" id="scaleSlider" min="0.5" max="2" step="0.1" value="1" /></div>
+          <div class="field"><label for="layersSlider">Complexity (rings) <span class="val" id="layersValue">6</span></label>
+          <input type="range" id="layersSlider" min="1" max="12" value="6" /></div>
+          <div class="field"><label for="lineSlider">Line thickness <span class="val" id="lineValue">1.0x</span></label>
+          <input type="range" id="lineSlider" min="0.5" max="3" step="0.1" value="1" /></div>
+          <div class="field"><label for="densitySlider">Density (detail count) <span class="val" id="densityValue">1.0x</span></label>
+          <input type="range" id="densitySlider" min="0.5" max="2" step="0.1" value="1" /></div>
+          <div class="field"><label for="spacingSlider">Spacing <span class="val" id="spacingValue">1.0x</span></label>
+          <input type="range" id="spacingSlider" min="0.5" max="2" step="0.1" value="1" /></div>
+        </section>
+        <section class="group">
+          <h2 class="y-title">Motion</h2>
+          <label class="switch"><input type="checkbox" id="animationToggle" checked /><span class="track"></span> Enable animation</label>
+          <div class="field"><label for="speedSlider">Animation speed <span class="val" id="speedValue">50%</span></label>
+          <input type="range" id="speedSlider" min="0" max="100" value="50" /></div>
+        </section>
+        <section class="group">
+          <h2 class="y-title">Color palette</h2>
+          <div class="swatches" role="radiogroup" aria-label="Colour palette">
+          <button class="color-preset active" data-theme="lavender" title="Lavender" aria-label="Lavender" role="radio" aria-checked="true" style="--a:#b19cd9;--b:#7851a9"></button>
+          <button class="color-preset" data-theme="cosmic" title="Cosmic" aria-label="Cosmic" role="radio" aria-checked="false" style="--a:#ff006e;--b:#8338ec"></button>
+          <button class="color-preset" data-theme="ocean" title="Ocean" aria-label="Ocean" role="radio" aria-checked="false" style="--a:#00d9ff;--b:#0066cc"></button>
+          <button class="color-preset" data-theme="sunset" title="Sunset" aria-label="Sunset" role="radio" aria-checked="false" style="--a:#ff6b35;--b:#f7931e"></button>
+          <button class="color-preset" data-theme="forest" title="Forest" aria-label="Forest" role="radio" aria-checked="false" style="--a:#06a77d;--b:#2d6a4f"></button>
+          <button class="color-preset" data-theme="sakura" title="Sakura" aria-label="Sakura" role="radio" aria-checked="false" style="--a:#ff69b4;--b:#ff1493"></button>
+          <button class="color-preset" data-theme="heritage" title="Gold &amp; Terracotta" aria-label="Gold &amp; Terracotta" role="radio" aria-checked="false" style="--a:#C9A45C;--b:#A84C32"></button>
+          <button class="color-preset" data-theme="royal" title="Royal Violet" aria-label="Royal Violet" role="radio" aria-checked="false" style="--a:#9a6fd0;--b:#7041A5"></button>
+          <button class="color-preset" data-theme="ivory" title="Ivory &amp; Gold" aria-label="Ivory &amp; Gold" role="radio" aria-checked="false" style="--a:#F1E7D1;--b:#C9A45C"></button>
+          <button class="color-preset" data-theme="terracotta" title="Terracotta" aria-label="Terracotta" role="radio" aria-checked="false" style="--a:#D9694A;--b:#A84C32"></button>
+          <button class="color-preset" data-theme="peacock" title="Peacock" aria-label="Peacock" role="radio" aria-checked="false" style="--a:#6f7ccf;--b:#C9A45C"></button>
+          <button class="color-preset" data-theme="violetgold" title="Violet &amp; Gold" aria-label="Violet &amp; Gold" role="radio" aria-checked="false" style="--a:#C9A45C;--b:#7041A5"></button>
+          </div>
+          <div class="row"><label for="colorInput" class="label">Stroke colour</label><input type="color" id="colorInput" value="#b19cd9" /></div>
+        </section>
+        <section class="group">
+          <h2 class="y-title">Background color</h2>
+          <div class="row"><div class="bg-swatches">
+          <button class="bg-swatch" type="button" data-bg="#090812" title="Midnight" aria-label="Background: Midnight" style="background:#090812"></button>
+          <button class="bg-swatch" type="button" data-bg="#20264A" title="Deep Indigo" aria-label="Background: Deep Indigo" style="background:#20264A"></button>
+          <button class="bg-swatch" type="button" data-bg="#1d0d0a" title="Terracotta night" aria-label="Background: Terracotta night" style="background:#1d0d0a"></button>
+          <button class="bg-swatch" type="button" data-bg="#1a0f2e" title="Violet night" aria-label="Background: Violet night" style="background:#1a0f2e"></button>
+          </div><input type="color" id="bgInput" value="#090812" aria-label="Custom background colour" /></div>
+        </section>
+        <section class="group">
+          <h2 class="y-title">Layers <span class="y-badge">Read-only</span></h2>
+          <ul class="layer-list" id="layerList" aria-label="Rings in the current pattern"></ul>
+          <p class="hint">Tiers/rings follow the Complexity slider. Per-layer editing is not implemented.</p>
+        </section>
+        <section class="group">
+          <h2 class="y-title">Preview &amp; info</h2>
+          <div class="preview-box"><canvas id="previewCanvas" width="200" height="200" aria-label="Pattern preview" role="img"></canvas></div>
+          <dl class="info">
+            <div><dt>Canvas</dt><dd id="infoResolution">—</dd></div>
+            <div><dt>Pattern</dt><dd id="infoPattern">—</dd></div>
+            <div><dt>Layers</dt><dd id="infoLayers">6</dd></div>
+            <div><dt>Symmetry</dt><dd id="infoSymmetry">6-fold</dd></div>
+            <div><dt>Palette</dt><dd id="infoTheme">Lavender</dd></div>
+          </dl>
+        </section>
+      </aside>
+    </div>
+
+    <!-- Bottom toolbar -->
+    <div class="dock y-panel" role="toolbar" aria-label="Pattern actions">
+      <div class="dock-group">
+        <button class="btn btn-sm" id="undoBtn" type="button" title="Undo (Ctrl+Z)"><i data-icon="undo" data-size="17"></i> <span>Undo</span></button>
+        <button class="btn btn-sm" id="redoBtn" type="button" title="Redo (Ctrl+Y)"><i data-icon="redo" data-size="17"></i> <span>Redo</span></button>
+        <button class="btn btn-sm" id="resetBtn" type="button" title="Reset all controls to default"><i data-icon="reset" data-size="17"></i> <span>Reset</span></button>
+        <button class="btn btn-sm" id="randomBtn" type="button"><i data-icon="dice" data-size="17"></i> <span>Randomize</span></button>
+        <button class="btn btn-sm" id="clearBtn" type="button" title="Blank the canvas"><i data-icon="eraser" data-size="17"></i> <span>Clear</span></button>
+      </div>
+      <div class="dock-group">
+        <button class="btn btn-sm" id="saveBtn" type="button"><i data-icon="folder" data-size="17"></i> <span>Save</span></button>
+        <button class="btn btn-sm" id="shareBtn" type="button"><i data-icon="share" data-size="17"></i> <span>Share</span></button>
+        <label class="export-size" title="PNG export resolution"><span class="sr-only">Export size</span><select id="exportSize" aria-label="Export resolution"><option value="1024">1024 px</option><option value="2048" selected>2048 px</option><option value="4096">4096 px</option></select></label>
+        <button class="btn btn-primary btn-sm" id="downloadBtn" type="button" title="Export 2048×2048 PNG"><i data-icon="download" data-size="17"></i> <span>Export PNG</span></button>
+      </div>
+    </div>
+  </main>
+
+  <script type="module" src="/src/js/pages/pattern.js"></script>
+</body>
+</html>

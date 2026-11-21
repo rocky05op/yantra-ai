@@ -1,0 +1,190 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YANTRA - Sacred Geometric Pattern Generator</title>
+
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="animations.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">✨</div>
+                <h1>YANTRA</h1>
+                <p class="tagline">Sacred Geometric Pattern Generator</p>
+            </div>
+
+            <div class="header-controls">
+                <button class="btn-icon" id="autoSaveToggle" title="Auto-save">💾</button>
+                <button class="btn-icon" id="undoBtn" title="Undo">↶</button>
+                <button class="btn-icon" id="redoBtn" title="Redo">↷</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+
+            <!-- Left Sidebar - Controls -->
+            <aside class="sidebar-left">
+
+                <div class="control-panel">
+                    <h3>Pattern Controls</h3>
+
+                    <div class="control-group">
+                        <label for="layersSlider">Layers</label>
+                        <input type="range" id="layersSlider" min="1" max="12" value="6" class="slider">
+                        <span class="value-display" id="layersValue">6</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="rotationSlider">Rotation (°)</label>
+                        <input type="range" id="rotationSlider" min="0" max="360" value="0" class="slider">
+                        <span class="value-display" id="rotationValue">0°</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="symmetrySlider">Symmetry</label>
+                        <input type="range" id="symmetrySlider" min="2" max="12" value="6" class="slider">
+                        <span class="value-display" id="symmetryValue">6</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="scaleSlider">Scale</label>
+                        <input type="range" id="scaleSlider" min="0.5" max="2" step="0.1" value="1" class="slider">
+                        <span class="value-display" id="scaleValue">1.0x</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="speedSlider">Animation Speed</label>
+                        <input type="range" id="speedSlider" min="0" max="100" value="50" class="slider">
+                        <span class="value-display" id="speedValue">50%</span>
+                    </div>
+
+                    <div class="control-group">
+                        <label>
+                            <input type="checkbox" id="animationToggle" checked>
+                            Enable Animation
+                        </label>
+                    </div>
+
+                    <button class="btn-primary" id="resetBtn">Reset to Default</button>
+                </div>
+
+                <div class="color-panel">
+                    <h3>Color Theme</h3>
+
+                    <div class="color-presets">
+                        <button class="color-preset active" data-theme="lavender" style="background: linear-gradient(135deg, #b19cd9, #7851a9);" title="Lavender"></button>
+
+                        <button class="color-preset" data-theme="cosmic" style="background: linear-gradient(135deg, #ff006e, #8338ec);" title="Cosmic"></button>
+
+                        <button class="color-preset" data-theme="ocean" style="background: linear-gradient(135deg, #00d9ff, #0066cc);" title="Ocean"></button>
+
+                        <button class="color-preset" data-theme="sunset" style="background: linear-gradient(135deg, #ff6b35, #f7931e);" title="Sunset"></button>
+
+                        <button class="color-preset" data-theme="forest" style="background: linear-gradient(135deg, #06a77d, #2d6a4f);" title="Forest"></button>
+
+                        <button class="color-preset" data-theme="sakura" style="background: linear-gradient(135deg, #ff69b4, #ff1493);" title="Sakura"></button>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="colorInput">Custom Color</label>
+                        <input type="color" id="colorInput" value="#b19cd9">
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Center Canvas -->
+            <main class="canvas-area">
+
+                <div class="canvas-container">
+                    <canvas id="yantracCanvas"></canvas>
+
+                    <div class="canvas-overlay">
+                        <p class="canvas-hint">Adjust controls to create your pattern</p>
+                    </div>
+                </div>
+
+                <div class="canvas-actions">
+                    <button class="btn-secondary" id="downloadBtn">⬇ Download as PNG</button>
+                    <button class="btn-secondary" id="shareBtn">📤 Share Pattern</button>
+                    <button class="btn-secondary" id="randomBtn">🎲 Random Pattern</button>
+                </div>
+            </main>
+
+            <!-- Right Sidebar - Preview & Info -->
+            <aside class="sidebar-right">
+
+                <div class="preview-panel">
+                    <h3>Preview</h3>
+
+                    <div class="preview-box">
+                        <canvas id="previewCanvas"></canvas>
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <h3>Pattern Info</h3>
+
+                    <div class="info-item">
+                        <span>Resolution:</span>
+                        <span id="infoResolution">1200x1200</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Layers:</span>
+                        <span id="infoLayers">6</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Symmetry:</span>
+                        <span id="infoSymmetry">6-fold</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span>Theme:</span>
+                        <span id="infoTheme">Lavender</span>
+                    </div>
+                </div>
+
+                <div class="presets-panel">
+                    <h3>Pattern Presets</h3>
+
+                    <button class="preset-btn" data-preset="mandala">Mandala</button>
+                    <button class="preset-btn" data-preset="flower">Flower</button>
+                    <button class="preset-btn" data-preset="geometric">Geometric</button>
+                    <button class="preset-btn" data-preset="spiral">Spiral</button>
+                    <button class="preset-btn" data-preset="kaleidoscope">Kaleidoscope</button>
+                </div>
+
+            </aside>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>✨ YANTRA - Imagine Beyond Limits ✨</p>
+            <p class="footer-text">Create sacred geometric patterns with AI-powered precision</p>
+        </footer>
+
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <!-- JavaScript -->
+    <script src="main.js"></script>
+    <script src="canvas.js"></script>
+    <script src="controls.js"></script>
+    <script src="export.js"></script>
+
+</body>
+</html>

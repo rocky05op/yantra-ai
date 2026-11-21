@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YANTRA — Power Up Your Ideas</title>
+  <meta name="description" content="YANTRA is a creative studio for sacred geometry and AI image generation from a prompt." />
+  <meta name="theme-color" content="#060311" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/base.css" />
+  <link rel="stylesheet" href="/src/css/landing.css" />
+</head>
+<body data-page="landing">
+  <div id="nav-root"></div>
+
+  <main class="page">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow" data-reveal><i data-icon="sparkles" data-size="16"></i> Pattern studio · Prompt to Image · AI-ready</span>
+        <h1 class="hero-title display" data-reveal style="--d:1">
+          Power Up Your Ideas
+          <span class="gradient-text">Into Visuals</span>
+        </h1>
+        <p class="hero-sub" data-reveal style="--d:2">
+          Generate sacred geometric patterns in real time, then describe any image in words and let AI
+          paint it — all in one luminous creative workspace.
+        </p>
+        <div class="hero-cta" data-reveal style="--d:3">
+          <a href="dashboard.html" class="btn btn-primary btn-lg" data-magnetic>Launch YANTRA <i data-icon="arrowRight" data-size="20" class="icon-arrow"></i></a>
+          <a href="#features" class="btn btn-lg" data-magnetic>Explore features <i data-icon="arrowDown" data-size="20"></i></a>
+        </div>
+        <dl class="hero-facts" data-reveal style="--d:4">
+          <div><dt>6</dt><dd>Colour themes</dd></div>
+          <div><dt>12</dt><dd>Max symmetry folds</dd></div>
+          <div><dt>5</dt><dd>Pattern presets</dd></div>
+          <div><dt>PNG</dt><dd>One-click export</dd></div>
+        </dl>
+      </div>
+
+      <div class="hero-visual" data-reveal style="--d:2">
+        <div class="blob" aria-hidden="true" data-parallax="0.02"></div>
+        <canvas id="heroCanvas" aria-label="Animated yantra pattern" role="img"></canvas>
+        <div class="orbit-chip c1" data-parallax="0.05"><i data-icon="hexagon" data-size="18"></i> Patterns</div>
+        <div class="orbit-chip c2" data-parallax="-0.04"><i data-icon="palette" data-size="18"></i> 6 themes</div>
+        <div class="orbit-chip c3" data-parallax="0.06"><i data-icon="wand" data-size="18"></i> Prompt to image</div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+      <header class="section-head" data-reveal>
+        <span class="eyebrow">Why YANTRA</span>
+        <h2 class="display">Built like an <em class="gradient-text">art lab</em></h2>
+        <p class="muted">Everything you need to imagine, draw and refine — nothing you don't.</p>
+      </header>
+
+      <div class="bento">
+        <article class="card bento-lg b-ai" data-reveal>
+          <div class="f-icon f-icon--pink"><i data-icon="wand" data-size="26"></i></div>
+          <h3>Prompt to Image</h3>
+          <p>Describe what you imagine, choose a visual style and let AI paint it. Add a reference image, regenerate until it is right, then download.</p>
+          <ul class="mini-list"><li><i data-icon="check" data-size="16"></i> Prompt editor + style gallery</li><li><i data-icon="check" data-size="16"></i> Optional reference image</li><li><i data-icon="check" data-size="16"></i> Regenerate, download &amp; history</li></ul>
+          <a class="card-link" href="prompt-to-image.html">Open Prompt to Image <i data-icon="arrowRight" data-size="16"></i></a>
+        </article>
+
+        <article class="card bento-lg b-pattern" data-reveal style="--d:1">
+          <div class="f-icon"><i data-icon="hexagon" data-size="26"></i></div>
+          <h3>Pattern Studio</h3>
+          <p>Layers, rotation, symmetry, scale and speed — sacred geometry rendered live, with six colour themes and 2048px PNG export.</p>
+          <svg class="doodle" viewBox="0 0 320 120" aria-hidden="true"><defs><linearGradient id="dg" x1="0" x2="1"><stop offset="0" stop-color="#22d3ee"/><stop offset="1" stop-color="#f472b6"/></linearGradient></defs><path d="M8 80C40 10 70 120 104 60S160 10 190 70 252 110 312 30" fill="none" stroke="url(#dg)" stroke-width="5" stroke-linecap="round" pathLength="1"/></svg>
+          <a class="card-link" href="index.html">Open Pattern Studio <i data-icon="arrowRight" data-size="16"></i></a>
+        </article>
+
+        <article class="card" data-reveal><div class="f-icon"><i data-icon="palette" data-size="24"></i></div><h3>Creative Freedom</h3><p>Layers, rotation, symmetry, scale and speed — unlimited combinations to bring your vision to life.</p></article>
+        <article class="card" data-reveal style="--d:1"><div class="f-icon f-icon--cyan"><i data-icon="zap" data-size="24"></i></div><h3>Lightning Fast</h3><p>Real-time rendering with instant visual feedback as you move any slider.</p></article>
+        <article class="card" data-reveal style="--d:2"><div class="f-icon f-icon--pink"><i data-icon="droplet" data-size="24"></i></div><h3>6 Stunning Themes</h3><p>Lavender, Cosmic, Ocean, Sunset, Forest and Sakura — plus any custom colour.</p></article>
+        <article class="card" data-reveal><div class="f-icon f-icon--cyan"><i data-icon="download" data-size="24"></i></div><h3>Easy Export</h3><p>Download high-resolution PNG images of your patterns and generated images.</p></article>
+        <article class="card" data-reveal style="--d:1"><div class="f-icon"><i data-icon="undo" data-size="24"></i></div><h3>Undo / Redo</h3><p>Full undo/redo in the Pattern Studio, plus a generation history for every image you create.</p></article>
+        <article class="card" data-reveal style="--d:2"><div class="f-icon f-icon--pink"><i data-icon="smartphone" data-size="24"></i></div><h3>Fully Responsive</h3><p>Touch-friendly layouts that adapt from desktop to phone.</p></article>
+      </div>
+    </section>
+
+    <!-- Workflow -->
+    <section class="section" id="workflow">
+      <header class="section-head" data-reveal>
+        <span class="eyebrow">Workflow</span>
+        <h2 class="display">From <em class="gradient-text">spark</em> to image</h2>
+      </header>
+      <ol class="steps">
+        <li class="step" data-reveal><span class="step-n">01</span><div class="f-icon"><i data-icon="sparkles" data-size="24"></i></div><h3>Imagine</h3><p>Write a prompt, upload a reference, or tune a sacred-geometry pattern.</p></li>
+        <li class="step" data-reveal style="--d:1"><span class="step-n">02</span><div class="f-icon f-icon--cyan"><i data-icon="sliders" data-size="24"></i></div><h3>Direct the look</h3><p>Write a prompt, choose a style and, if you like, set how strongly a reference image guides the result.</p></li>
+        <li class="step" data-reveal style="--d:2"><span class="step-n">03</span><div class="f-icon f-icon--pink"><i data-icon="sparkles" data-size="24"></i></div><h3>Create &amp; export</h3><p>Generate, regenerate until it feels right, then download.</p></li>
+      </ol>
+    </section>
+
+    <!-- CTA -->
+    <section class="section cta-wrap">
+      <div class="cta glass glow-border" data-reveal>
+        <h2 class="display">Ready to <em class="gradient-text">create</em>?</h2>
+        <p class="muted">Open the studio and make something nobody has seen before.</p>
+        <a href="dashboard.html" class="btn btn-primary btn-lg" data-magnetic>Enter YANTRA <i data-icon="arrowRight" data-size="20" class="icon-arrow"></i></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div><strong class="gradient-text display" style="font-size:1.3rem">YANTRA</strong><p class="muted">Imagine beyond limits.</p></div>
+      <nav class="footer-links" aria-label="Footer"><a href="dashboard.html">Studio</a><a href="index.html">Patterns</a><a href="prompt-to-image.html">Prompt to Image</a></nav>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/js/pages/landing.js"></script>
+</body>
+</html>

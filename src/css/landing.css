@@ -1,0 +1,68 @@
+.hero { min-height: 100dvh; max-width: 1280px; margin: 0 auto; padding: calc(var(--nav-h) + 32px) var(--gutter) 64px; display: grid; grid-template-columns: 1.05fr 0.95fr; gap: clamp(24px, 5vw, 64px); align-items: center; }
+.hero-copy { display: grid; gap: 26px; justify-items: start; min-width: 0; }
+.hero-title { font-size: clamp(2.6rem, 6.4vw, 5.2rem); line-height: 1.04; }
+.hero-title .gradient-text { display: block; font-style: italic; padding-bottom: 0.08em; }
+.hero-sub { max-width: 560px; font-size: clamp(1rem, 1.5vw, 1.18rem); color: var(--muted); }
+.hero-cta { display: flex; flex-wrap: wrap; gap: 14px; }
+.hero-facts { margin: 8px 0 0; padding: 18px 0 0; display: grid; grid-template-columns: repeat(4, auto); gap: clamp(16px, 3vw, 40px); border-top: 1px solid var(--line); width: 100%; }
+.hero-facts dt { font-size: clamp(1.5rem, 2.6vw, 2rem); font-weight: 700; background: var(--grad-brand); -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1.1; }
+.hero-facts dd { margin: 2px 0 0; color: var(--muted); font-size: 0.84rem; }
+
+.hero-visual { position: relative; aspect-ratio: 1; width: min(100%, 560px); justify-self: center; display: grid; place-items: center; }
+.hero-visual canvas { position: relative; z-index: 2; width: 100%; height: 100%; }
+.blob { position: absolute; inset: 8%; z-index: 0; background: linear-gradient(135deg, rgba(168, 85, 247, 0.55), rgba(34, 211, 238, 0.35), rgba(244, 114, 182, 0.4)); filter: blur(46px); animation: morph 14s ease-in-out infinite alternate; }
+@keyframes morph {
+  0% { border-radius: 60% 40% 55% 45% / 50% 60% 40% 50%; transform: rotate(0) scale(1); }
+  50% { border-radius: 40% 60% 35% 65% / 60% 40% 60% 40%; transform: rotate(80deg) scale(1.08); }
+  100% { border-radius: 55% 45% 65% 35% / 40% 55% 45% 60%; transform: rotate(160deg) scale(0.96); }
+}
+.orbit-chip { position: absolute; z-index: 3; display: inline-flex; align-items: center; gap: 8px; padding: 9px 15px; border-radius: 99px; font-size: 0.86rem; font-weight: 500; background: var(--glass-strong); border: 1px solid var(--line-strong); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); box-shadow: 0 14px 34px -14px rgba(0, 0, 0, 0.8); animation: floaty 6s ease-in-out infinite; }
+.orbit-chip .icon { color: var(--cyan); }
+.c1 { top: 8%; left: 0; } .c2 { bottom: 14%; left: -2%; animation-delay: -2s; } .c3 { top: 24%; right: -2%; animation-delay: -4s; }
+.c2 .icon { color: var(--pink); } .c3 .icon { color: var(--lavender); }
+@keyframes floaty { 0%, 100% { margin-top: 0; } 50% { margin-top: -12px; } }
+
+.section { max-width: 1240px; margin: 0 auto; padding: clamp(56px, 9vw, 110px) var(--gutter); }
+.section-head { display: grid; gap: 14px; justify-items: center; text-align: center; margin-bottom: clamp(32px, 5vw, 56px); }
+.section-head h2 { font-size: clamp(2rem, 4.6vw, 3.4rem); line-height: 1.1; }
+.section-head h2 em { font-style: italic; }
+
+.bento { display: grid; grid-template-columns: repeat(6, 1fr); gap: 18px; }
+.bento > .card { grid-column: span 2; display: grid; align-content: start; gap: 10px; }
+.bento > .bento-lg { grid-column: span 3; min-height: 300px; }
+.card h3 { font-size: 1.15rem; }
+.card p { color: var(--muted); font-size: 0.95rem; }
+.f-icon { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; color: #fff; margin-bottom: 6px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.7), rgba(99, 102, 241, 0.35)); box-shadow: 0 10px 28px -10px var(--electric), inset 0 1px 0 rgba(255, 255, 255, 0.25); transition: transform 0.4s var(--ease); }
+.f-icon--cyan { background: linear-gradient(135deg, rgba(34, 211, 238, 0.65), rgba(99, 102, 241, 0.3)); box-shadow: 0 10px 28px -10px var(--cyan), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+.f-icon--pink { background: linear-gradient(135deg, rgba(244, 114, 182, 0.65), rgba(168, 85, 247, 0.35)); box-shadow: 0 10px 28px -10px var(--pink), inset 0 1px 0 rgba(255, 255, 255, 0.25); }
+.card:hover .f-icon { transform: translateY(-4px) rotate(-6deg) scale(1.06); }
+.card-link { display: inline-flex; align-items: center; gap: 8px; margin-top: 8px; color: var(--lavender); font-weight: 600; font-size: 0.92rem; }
+.card-link .icon { transition: transform 0.3s var(--ease); } .card-link:hover .icon { transform: translateX(5px); }
+.mini-list { list-style: none; margin: 4px 0 0; padding: 0; display: grid; gap: 8px; color: var(--text); font-size: 0.92rem; }
+.mini-list li { display: flex; align-items: center; gap: 8px; } .mini-list .icon { color: var(--cyan); }
+.doodle { width: 100%; max-width: 340px; margin-top: 4px; }
+.doodle path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: draw 3.6s var(--ease) infinite alternate; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: s; position: relative; }
+.step { position: relative; padding: 28px; border-radius: var(--radius); background: var(--glass); border: 1px solid var(--line); display: grid; gap: 10px; }
+.step-n { position: absolute; top: 18px; right: 22px; font-family: var(--font-display); font-size: 2.6rem; color: rgba(196, 181, 253, 0.16); line-height: 1; }
+.step p { color: var(--muted); }
+
+.cta { padding: clamp(36px, 7vw, 72px) var(--gutter); display: grid; justify-items: center; gap: 18px; text-align: center; overflow: hidden; background: radial-gradient(700px 260px at 50% 0, rgba(168, 85, 247, 0.28), transparent), var(--glass); }
+.cta h2 { font-size: clamp(2rem, 5vw, 3.6rem); } .cta h2 em { font-style: italic; }
+
+@media (max-width: 1000px) {
+  .hero { grid-template-columns: 1fr; min-height: 0; text-align: left; }
+  .hero-visual { width: min(86vw, 460px); order: -1; }
+  .bento { grid-template-columns: repeat(2, 1fr); }
+  .bento > .card, .bento > .bento-lg { grid-column: span 1; min-height: 0; }
+  .bento > .bento-lg { grid-column: span 2; }
+  .steps { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .hero-facts { grid-template-columns: repeat(2, 1fr); }
+  .bento { grid-template-columns: 1fr; } .bento > .bento-lg { grid-column: span 1; }
+  .hero-cta .btn { width: 100%; }
+  .c1 { left: -4px; } .c3 { right: -4px; } .orbit-chip { font-size: 0.78rem; padding: 7px 11px; }
+}
