@@ -1,40 +1,83 @@
+<div align="center">
+
 # YANTRA — Creative AI Studio
-### GenAI Meets Human Brain
 
-**Project Status:** Active Development  
-**Current Development Milestone:** Approximately 50%  
-**Project Type:** AI-Powered Creative Studio  
-**Frontend:** HTML5, CSS3, JavaScript, Vite  
-**Backend:** Python, FastAPI  
-**AI Integration:** Google Gemini Image, Cloudflare FLUX, FLUX fallback
+**GenAI Meets Human Brain**
 
----
+An AI-powered creative studio where ideas, prompts, sketches and geometry become digital artwork.
 
-## 1. Project Overview
+![Status](https://img.shields.io/badge/status-active%20development-blue)
+![Milestone](https://img.shields.io/badge/milestone-~50%25-orange)
 
-YANTRA is an AI-powered creative platform designed to combine human imagination with generative artificial intelligence.
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?logo=javascript&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)
+![Google Gemini](https://img.shields.io/badge/Google%20Gemini-8E75B2?logo=googlegemini&logoColor=white)
+![Cloudflare](https://img.shields.io/badge/Cloudflare%20FLUX-F38020?logo=cloudflare&logoColor=white)
 
-The main idea behind YANTRA is **"GenAI Meets Human Brain"** — allowing users to transform their creativity, ideas, prompts and visual concepts into digital artwork.
-
-Instead of being just another AI image generator, YANTRA aims to provide an interactive creative environment where users can create, customize, generate, manage and explore digital artwork.
-
-The platform is being developed as a unified AI Creative Studio with multiple creative workspaces, an animated user interface and AI-powered generation capabilities.
-
-## 2. Current Development Progress
-
-The project has reached approximately the 50% development milestone.
-
-The current codebase already contains the main frontend structure, multiple creative workspaces, interactive components, image-generation integration and an initial backend architecture.
-
-However, having the code implemented does not mean every feature is fully tested or production-ready.
-
-The remaining development phase will focus on completing the user experience, connecting and stabilizing services, improving functionality, integrating account management and conducting proper testing.
+</div>
 
 ---
 
-## 3. Features Implemented So Far
+> **Project status: active development (~50% milestone).**
+> The features listed as implemented exist in the current codebase, but that does not mean every feature is fully tested or production-ready. Accounts, database storage and cloud gallery are **not yet implemented**, and the backend is an initial implementation rather than a completed production service.
 
-### A. Frontend & User Interface
+## Table of Contents
+
+- [Overview](#overview)
+- [At a Glance](#at-a-glance)
+- [Features Implemented So Far](#features-implemented-so-far)
+- [AI Engine](#ai-engine)
+- [Backend & Security](#backend--security)
+- [Local Data Storage](#local-data-storage)
+- [Project Structure](#project-structure)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Development Roadmap](#development-roadmap)
+- [Remaining Development Tasks](#remaining-development-tasks)
+- [Planned for the Next Phase](#planned-for-the-next-phase)
+- [Development Notes](#development-notes)
+- [Vision](#vision)
+
+---
+
+## Overview
+
+YANTRA is an AI-powered creative platform that combines human imagination with generative artificial intelligence. The core idea is **"GenAI Meets Human Brain"**: users turn their creativity, ideas, prompts and visual concepts into digital artwork.
+
+Rather than being just another AI image generator, YANTRA aims to be an interactive creative environment where users can **create, customize, generate, manage and explore** digital artwork. It is being built as a unified AI Creative Studio with multiple creative workspaces, an animated interface and AI-powered generation.
+
+### Workspaces
+
+| Workspace | Purpose |
+|---|---|
+| **Pattern Studio** | Real-time, canvas-based geometric and sacred-geometry-inspired pattern creation |
+| **Prompt to Image Studio** | The main AI image-generation workspace |
+| **Sketch to Image** | Draw or upload a sketch and transform it with AI |
+| **Dashboard & Gallery** | Central hub for workspaces and saved work |
+
+## At a Glance
+
+| | |
+|---|---|
+| **Project type** | AI-powered creative studio |
+| **Status** | Active development, approximately 50% of the planned milestone |
+| **Frontend** | HTML5, CSS3, JavaScript (vanilla), Vite |
+| **Backend** | Python, FastAPI |
+| **AI integration** | Google Gemini Image, Cloudflare FLUX.2 Klein, Pollinations FLUX fallback |
+| **Persistence** | Browser `localStorage` only (no accounts or cloud sync yet) |
+
+## Features Implemented So Far
+
+The current codebase already contains the main frontend structure, multiple creative workspaces, interactive components, image-generation integration and an initial backend architecture. Expand a section below for details.
+
+<details>
+<summary><b>A. Frontend & User Interface</b></summary>
+
+<br>
 
 - Multi-page website architecture using Vite.
 - Animated loading and introduction screen.
@@ -47,11 +90,14 @@ The remaining development phase will focus on completing the user experience, co
 - Interactive navigation and reusable UI components.
 - Reduced-motion accessibility support.
 
-### B. Pattern Studio
+</details>
+
+<details>
+<summary><b>B. Pattern Studio</b></summary>
+
+<br>
 
 An interactive workspace for creating geometric and sacred-geometry-inspired patterns.
-
-**Implemented features:**
 
 - Real-time canvas-based pattern generation.
 - Adjustable pattern layers.
@@ -62,12 +108,7 @@ An interactive workspace for creating geometric and sacred-geometry-inspired pat
 - Animation on/off toggle.
 - Multiple colour themes.
 - Custom colour selection.
-- Preset patterns:
-  - Mandala
-  - Flower
-  - Geometric
-  - Spiral
-  - Kaleidoscope
+- Preset patterns: **Mandala**, **Flower**, **Geometric**, **Spiral**, **Kaleidoscope**.
 - Random pattern generation.
 - Undo and redo.
 - Reset functionality.
@@ -78,25 +119,28 @@ An interactive workspace for creating geometric and sacred-geometry-inspired pat
 - Share functionality.
 - Automatic saving of pattern settings.
 
-### C. Prompt to Image Studio
+</details>
+
+<details>
+<summary><b>C. Prompt to Image Studio</b></summary>
+
+<br>
 
 The main AI image-generation workspace.
 
-**Implemented features:**
+**Prompting**
 
 - Text prompt editor.
 - Prompt character counter (500 characters).
 - Random prompt suggestions.
 - Predefined prompt ideas.
-- Multiple visual style selections:
-  - Watercolor
-  - Neon Cyberpunk
-  - Anime
-  - Oil Painting
-  - Pencil Drawing
-  - 3D Render
-  - Sacred Geometry
-  - Surreal
+
+**Visual styles**
+
+Watercolor, Neon Cyberpunk, Anime, Oil Painting, Pencil Drawing, 3D Render, Sacred Geometry, Surreal.
+
+**Reference image & advanced settings**
+
 - Reference image upload.
 - Drag-and-drop image upload.
 - Reference influence control.
@@ -105,10 +149,16 @@ The main AI image-generation workspace.
 - Aspect ratio selection.
 - Resolution selection.
 - Backend request preview.
+
+**Generation experience**
+
 - Animated generation interface.
 - Loading and generation status.
 - Image result preview.
 - Regenerate functionality.
+
+**Results & history**
+
 - Download generated images.
 - Use generated image as reference.
 - Copy prompt.
@@ -118,11 +168,14 @@ The main AI image-generation workspace.
 - Delete individual history items.
 - Clear generation history.
 
-### D. Sketch to Image Workspace
+</details>
 
-A separate sketch-based creative workspace is also present in the current project files.
+<details>
+<summary><b>D. Sketch to Image Workspace</b></summary>
 
-**Implemented features:**
+<br>
+
+A separate sketch-based creative workspace is present in the current project files.
 
 - HTML5 canvas drawing.
 - Brush tool.
@@ -143,11 +196,14 @@ A separate sketch-based creative workspace is also present in the current projec
 - Download generated result.
 - Save generated result to gallery.
 
-### E. Dashboard & Gallery
+</details>
+
+<details>
+<summary><b>E. Dashboard & Gallery</b></summary>
+
+<br>
 
 The dashboard provides a central place to access creative workspaces.
-
-**Implemented features:**
 
 - Welcome section.
 - Workspace shortcuts.
@@ -160,42 +216,18 @@ The dashboard provides a central place to access creative workspaces.
 - Download saved works.
 - Remove saved works.
 
-### F. Backend Architecture
+</details>
 
-An initial FastAPI backend has been implemented.
+## AI Engine
 
-**Implemented components:**
+The backend contains an initial multi-provider image-generation pipeline:
 
-- FastAPI application.
-- Health-check endpoint.
-- Image-generation endpoint.
-- Multipart form-data processing.
-- Prompt validation.
-- Style validation.
-- Negative prompt validation.
-- Aspect ratio validation.
-- Resolution validation.
-- Sketch influence validation.
-- Reference image upload handling.
-- PNG, JPEG and WebP magic-byte verification.
-- 15 MB reference image upload limit.
-- Custom security middleware.
-- Content Security Policy headers.
-- Security response headers.
-- Sliding-window IP-based rate limiting.
-- Generation mode validation.
-- Binary PNG image response.
-
-### G. AI Engine Integration
-
-The backend contains an initial multi-provider image-generation pipeline.
-
-**Current architecture:**
-
-1. Google Gemini Image — primary Prompt-to-Image provider.
-2. Cloudflare FLUX.2 Klein — Sketch-to-Image provider.
-3. FLUX through Pollinations — Prompt-to-Image fallback.
-4. Offline fallback response if generation providers fail.
+| Order | Provider | Role |
+|:---:|---|---|
+| 1 | **Google Gemini Image** | Primary Prompt-to-Image provider |
+| 2 | **Cloudflare FLUX.2 Klein** | Sketch-to-Image provider |
+| 3 | **FLUX through Pollinations** | Prompt-to-Image fallback |
+| 4 | **Offline fallback response** | Returned if generation providers fail |
 
 The backend also supports:
 
@@ -207,11 +239,46 @@ The backend also supports:
 - Resolution handling.
 - Reference image processing.
 
-### H. Local Data Storage
+> **Note:** Prompt-to-Image and Sketch-to-Image use separate generation modes. Gemini and Cloudflare generation and fallback handling still require stability testing (see [Remaining Development Tasks](#remaining-development-tasks)).
 
-Browser-based storage functionality has been implemented.
+## Backend & Security
 
-- Save creative works using localStorage.
+An initial FastAPI backend has been implemented.
+
+### API
+
+| Endpoint | Description |
+|---|---|
+| `GET /api/v1/health` | Health check (`http://127.0.0.1:8000/api/v1/health` locally) |
+| `POST /api/v1/generate` | Image generation. Accepts `multipart/form-data`, returns a binary PNG image |
+
+### Request validation
+
+- Prompt validation.
+- Style validation.
+- Negative prompt validation.
+- Aspect ratio validation.
+- Resolution validation.
+- Sketch influence validation.
+- Generation mode validation.
+
+### Upload handling & security
+
+| Area | Implementation |
+|---|---|
+| Reference uploads | Reference image upload handling with **PNG, JPEG and WebP magic-byte verification** |
+| Upload size | **15 MB** reference image limit |
+| Middleware | Custom security middleware |
+| Headers | Content Security Policy (CSP) headers and additional security response headers |
+| Rate limiting | Sliding-window, IP-based rate limiting |
+
+> **Security reminder:** API keys and private credentials must remain on the backend and must never be committed to a public repository.
+
+## Local Data Storage
+
+Browser-based storage is implemented with `localStorage`:
+
+- Save creative works.
 - Store generated image history.
 - Save pattern settings.
 - Retrieve saved works.
@@ -219,22 +286,19 @@ Browser-based storage functionality has been implemented.
 - Clear generation history.
 - Store reduced-size image previews.
 
-**Note:** Current gallery and history data are browser-local. Cloud synchronization and user-account-based storage have not yet been implemented.
+> **Limitation:** Gallery and history data are currently **browser-local**. Cloud synchronization and user-account-based storage have not yet been implemented.
 
----
-
-## 4. Current Project Architecture
+## Project Structure
 
 ```text
 YANTRA/
 │
-├── frontend/
-│   ├── loading.html
-│   ├── landing.html
-│   ├── dashboard.html
-│   ├── index.html
-│   ├── prompt-to-image.html
-│   └── sketch-to-image.html
+├── loading.html
+├── landing.html
+├── dashboard.html
+├── index.html
+├── prompt-to-image.html
+├── sketch-to-image.html
 │
 ├── src/
 │   ├── css/
@@ -254,7 +318,8 @@ YANTRA/
 │   ├── main.py
 │   ├── ai_engine.py
 │   ├── security.py
-│   └── requirements.txt
+│   ├── requirements.txt
+│   └── .env.example
 │
 ├── docs/
 │   └── BACKEND_INTEGRATION.md
@@ -266,14 +331,103 @@ YANTRA/
 └── README.md
 ```
 
----
+## Tech Stack
 
-## 5. Remaining Development Tasks
+| Technology | Purpose |
+|---|---|
+| HTML5 | Application structure |
+| CSS3 | Styling and animations |
+| JavaScript | Frontend functionality |
+| Vite | Development server and build tool |
+| Python | Backend programming |
+| FastAPI | Backend API framework |
+| Google Gemini Image | AI image generation |
+| Cloudflare FLUX.2 Klein | Sketch-to-image generation |
+| Pollinations FLUX | Image-generation fallback |
+| HTML5 Canvas | Pattern generation and drawing |
+| Browser `localStorage` | Local gallery and history |
+| Pillow | Image processing |
+| HTTPX | External AI provider requests |
+
+## Getting Started
+
+### Frontend
+
+**Requirements:** Node.js, npm
+
+```bash
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+
+# Create a production build
+npm run build
+```
+
+### Backend
+
+**Requirements:** Python 3.10+, pip
+
+```bash
+# Install dependencies
+pip install -r backend/requirements.txt
+```
+
+Configure backend environment variables using `backend/.env.example`, then start the backend:
+
+```bash
+uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
+```
+
+Backend health endpoint:
+
+```text
+http://127.0.0.1:8000/api/v1/health
+```
+
+Image-generation endpoint:
+
+```text
+POST /api/v1/generate
+```
+
+### Connecting the frontend to the backend
+
+Set the generation URL in the frontend environment configuration:
+
+```env
+VITE_YANTRA_GENERATE_URL=http://127.0.0.1:8000/api/v1/generate
+```
+
+> Restart Vite after changing environment variables.
+
+For more detail, see [`docs/BACKEND_INTEGRATION.md`](docs/BACKEND_INTEGRATION.md).
+
+## Development Roadmap
+
+| Phase | Development Focus | Status |
+|:---:|---|---|
+| 1 | Project foundation and frontend architecture | Completed |
+| 2 | Landing page, loading screen and dashboard | Implemented |
+| 3 | Pattern Studio | Implemented |
+| 4 | Prompt to Image workspace | Implemented |
+| 5 | Sketch to Image workspace | Implemented |
+| 6 | Initial backend and AI engine architecture | Implemented |
+| 7 | Complete API integration and testing | In Progress |
+| 8 | Login, signup and authentication | Pending |
+| 9 | Database and cloud storage | Pending |
+| 10 | Advanced UI/UX and feature improvements | Pending |
+| 11 | Full application testing and security review | Pending |
+| 12 | Production deployment | Pending |
+
+## Remaining Development Tasks
 
 The following work is planned for the next development phase.
 
 | No. | Pending Task | Description | Priority |
-|---|---|---|---|
+|:---:|---|---|:---:|
 | 1 | Login & Signup | Build proper registration, login and logout pages | High |
 | 2 | Authentication | Implement secure user authentication and session management | High |
 | 3 | User Profiles | Profile page, account settings and user information | High |
@@ -295,15 +449,12 @@ The following work is planned for the next development phase.
 | 19 | Deployment | Configure production frontend and backend hosting | High |
 | 20 | Final Optimization | Performance, accessibility and production readiness | Medium |
 
----
+## Planned for the Next Phase
 
-## 6. Major Features Planned for the Next Phase
+<details>
+<summary><b>A. Complete Authentication System</b></summary>
 
-### A. Complete Authentication System
-
-A complete authentication experience will be introduced.
-
-Planned functionality:
+<br>
 
 - Login page.
 - Signup page.
@@ -315,11 +466,14 @@ Planned functionality:
 - Account settings.
 - Personalized user dashboard.
 
-### B. Improved UI/UX
+</details>
+
+<details>
+<summary><b>B. Improved UI/UX</b></summary>
+
+<br>
 
 The next phase will focus heavily on making YANTRA feel like a polished AI creative product.
-
-Planned improvements:
 
 - More creative and modern interface.
 - Better visual hierarchy.
@@ -332,7 +486,12 @@ Planned improvements:
 - Better notifications and error messages.
 - Consistent design across all workspaces.
 
-### C. Complete AI Integration
+</details>
+
+<details>
+<summary><b>C. Complete AI Integration</b></summary>
+
+<br>
 
 - Complete API connection testing.
 - Improve image-generation reliability.
@@ -343,7 +502,12 @@ Planned improvements:
 - Improve error recovery.
 - Ensure all frontend controls work with the actual backend.
 
-### D. User Gallery & Cloud Storage
+</details>
+
+<details>
+<summary><b>D. User Gallery & Cloud Storage</b></summary>
+
+<br>
 
 - User-specific gallery.
 - Persistent cloud storage.
@@ -353,7 +517,12 @@ Planned improvements:
 - Delete and organize generated works.
 - Access saved work from different devices.
 
-### E. Final Testing & Deployment
+</details>
+
+<details>
+<summary><b>E. Final Testing & Deployment</b></summary>
+
+<br>
 
 - Frontend testing.
 - Backend testing.
@@ -364,121 +533,13 @@ Planned improvements:
 - Production deployment.
 - Final bug fixing.
 
----
+</details>
 
-## 7. Current Technology Stack
+## Development Notes
 
-| Technology | Purpose |
-|---|---|
-| HTML5 | Application structure |
-| CSS3 | Styling and animations |
-| JavaScript | Frontend functionality |
-| Vite | Development server and build tool |
-| Python | Backend programming |
-| FastAPI | Backend API framework |
-| Google Gemini Image | AI image generation |
-| Cloudflare FLUX.2 Klein | Sketch-to-image generation |
-| Pollinations FLUX | Image-generation fallback |
-| HTML5 Canvas | Pattern generation and drawing |
-| Browser localStorage | Local gallery and history |
-| Pillow | Image processing |
-| HTTPX | External AI provider requests |
-
----
-
-## 8. Project Development Roadmap
-
-| Phase | Development Focus | Status |
-|---|---|---|
-| Phase 1 | Project foundation and frontend architecture | Completed |
-| Phase 2 | Landing page, loading screen and dashboard | Implemented |
-| Phase 3 | Pattern Studio | Implemented |
-| Phase 4 | Prompt to Image workspace | Implemented |
-| Phase 5 | Sketch to Image workspace | Implemented |
-| Phase 6 | Initial backend and AI engine architecture | Implemented |
-| Phase 7 | Complete API integration and testing | In Progress |
-| Phase 8 | Login, signup and authentication | Pending |
-| Phase 9 | Database and cloud storage | Pending |
-| Phase 10 | Advanced UI/UX and feature improvements | Pending |
-| Phase 11 | Full application testing and security review | Pending |
-| Phase 12 | Production deployment | Pending |
-
----
-
-## 9. Development Setup
-
-### Frontend
-
-Requirements:
-- Node.js
-- npm
-
-Installation:
-
-```bash
-npm install
-```
-
-Start development server:
-
-```bash
-npm run dev
-```
-
-Production build:
-
-```bash
-npm run build
-```
-
-### Backend
-
-Requirements:
-- Python 3.10+
-- pip
-
-Install dependencies:
-
-```bash
-pip install -r backend/requirements.txt
-```
-
-Configure backend environment variables using `backend/.env.example`.
-
-Start backend:
-
-```bash
-uvicorn backend.main:app --reload --host 127.0.0.1 --port 8000
-```
-
-Backend health endpoint:
-
-```text
-http://127.0.0.1:8000/api/v1/health
-```
-
-Image-generation endpoint:
-
-```text
-POST /api/v1/generate
-```
-
-Frontend API configuration:
-
-```env
-VITE_YANTRA_GENERATE_URL=http://127.0.0.1:8000/api/v1/generate
-```
-
-Restart Vite after changing environment variables.
-
----
-
-## 10. Important Development Notes
-
-- The project currently uses Vanilla JavaScript and Vite.
-- No React or Framer Motion dependency is currently used.
+- The project currently uses **Vanilla JavaScript and Vite**. No React or Framer Motion dependency is used.
 - Frontend image-generation requests are centralized in `src/js/api/aiClient.js`.
-- The backend accepts multipart/form-data requests.
+- The backend accepts `multipart/form-data` requests.
 - Prompt-to-Image and Sketch-to-Image use separate generation modes.
 - Gallery and history are currently browser-local.
 - The existing backend is an initial implementation, not a completed production service.
@@ -486,13 +547,9 @@ Restart Vite after changing environment variables.
 - The project still requires full functional and integration testing.
 - API keys and private credentials must remain on the backend and must never be committed to a public repository.
 
----
+## Vision
 
-## 11. Final Project Vision
-
-YANTRA aims to become a complete AI-powered creative ecosystem where human imagination and artificial intelligence work together.
-
-The final platform will combine:
+YANTRA aims to become a complete AI-powered creative ecosystem where human imagination and artificial intelligence work together. The final platform will combine:
 
 - AI-powered image generation.
 - Sketch-based image transformation.
@@ -502,9 +559,13 @@ The final platform will combine:
 - Advanced creative controls.
 - A polished, animated and responsive interface.
 
-Our goal is not simply to build an image-generation website. We aim to create an interactive creative studio that makes AI-powered creativity more accessible, intuitive and engaging.
+The goal is not simply to build an image-generation website, but an interactive creative studio that makes AI-powered creativity more accessible, intuitive and engaging.
+
+<div align="center">
 
 **YANTRA — Where Human Imagination Meets Generative AI.**
+
+</div>
 
 ---
 
