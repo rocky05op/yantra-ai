@@ -41,6 +41,15 @@
             <button class="btn-icon" type="button" id="redoBtn" title="Redo (Ctrl+Shift+Z)" aria-label="Redo" disabled><i data-icon="redo" data-size="18"></i></button>
             <button class="btn-icon" type="button" id="clearBtn" title="Clear canvas" aria-label="Clear canvas"><i data-icon="trash" data-size="18"></i></button>
           </div>
+          <div class="field sk-ratio-field">
+  <label for="aspectRatio">Canvas aspect ratio</label>
+  <select id="aspectRatio">
+    <option value="1:1">1:1 — Square</option>
+    <option value="4:3" selected>4:3 — Landscape</option>
+    <option value="16:9">16:9 — Widescreen</option>
+    <option value="9:16">9:16 — Portrait</option>
+  </select>
+</div>
           <div class="field">
             <label for="size">Brush size <span class="val" id="sizeVal">8px</span></label>
             <input type="range" id="size" min="1" max="80" value="8" />

@@ -10,7 +10,9 @@ import { STYLES, isBackendConfigured, generateImage, describeRequest, BackendNot
 initShell();
 const $ = (id) => document.getElementById(id);
 const reduce = prefersReducedMotion();
-const W = 1024 , H = 768 , MAX_UNDO = 40;
+let W = 1024;
+let H = 768;
+const MAX_UNDO = 40;
 const bg = $('bg');
 const draw = $('draw');
 const bgc = bg.getContext('2d');
@@ -18,6 +20,7 @@ const ctx = draw.getContext('2d');
 [bg, draw].forEach((c) => { c.width = W; c.height = H; });
 const state = {
   tool: 'brush',
+  aspectRatio: '4:3',
   style: 'none',
   image: null,
   undo: [],
@@ -32,7 +35,12 @@ const state = {
   current: null,
   timers: []
 };
-
+console.log('[YANTRA DEBUG]', {
+  context: ctx,
+  canvasWidth: draw.width,
+  canvasHeight: draw.height,
+  canvasRect: draw.getBoundingClientRect()
+});
 /* ---------- ambient particles (same markup as Prompt to Image) ---------- */
 const colors = ['#c4b5fd', '#22d3ee', '#f472b6', '#a855f7', '#e9d5ff'], rnd = (a, b) => a + Math.random() * (b - a);
 function particles(host, n) { for (let i = 0; i < n; i++) { const p = document.createElement('i'), t = rnd(8, 18); p.style.cssText = `--x:${rnd(2, 98).toFixed(1)}%;--s:${rnd(2, 6).toFixed(1)}px;--t:${t.toFixed(1)}s;--dl:${(-rnd(0, t)).toFixed(1)}s;--dx:${rnd(-40, 40).toFixed(0)}px;--c:${colors[i % 5]}`; host.appendChild(p); } }
@@ -56,6 +64,66 @@ document.addEventListener('keydown', (e) => {
   const k = e.key.toLowerCase(), mod = e.ctrlKey || e.metaKey;
   if (mod && k === 'z') { e.preventDefault(); e.shiftKey ? redo() : undo(); } else if (mod && k === 'y') { e.preventDefault(); redo(); }
   else if (!mod && k === 'b') setTool('brush'); else if (!mod && k === 'e') setTool('eraser');
+});
+function resizeCanvasForRatio(ratio) {
+  if (state.drawing) return;
+
+  const dimensions = {
+    '1:1': [1024, 1024],
+    '4:3': [1024, 768],
+    '16:9': [1024, 576],
+    '9:16': [576, 1024]
+  };
+
+  const [newW, newH] = dimensions[ratio] || dimensions['4:3'];
+
+  if (newW === W && newH === H) return;
+
+  // Preserve existing drawing
+  const temp = document.createElement('canvas');
+  temp.width = W;
+  temp.height = H;
+
+  temp.getContext('2d').drawImage(draw, 0, 0);
+
+  // Resize internal canvas
+  W = newW;
+  H = newH;
+
+  bg.width = draw.width = W;
+  bg.height = draw.height = H;
+
+  // Repaint background and uploaded image
+  paintBg();
+
+  // Fit old drawing without stretching it
+  const scale = Math.min(W / temp.width, H / temp.height);
+  const fittedW = temp.width * scale;
+  const fittedH = temp.height * scale;
+
+  ctx.clearRect(0, 0, W, H);
+
+  ctx.drawImage(
+    temp,
+    (W - fittedW) / 2,
+    (H - fittedH) / 2,
+    fittedW,
+    fittedH
+  );
+
+  // Old history snapshots have different dimensions
+  state.undo = [];
+  state.redo = [];
+  syncHistoryBtns();
+
+  state.aspectRatio = ratio;
+  $('wrap').style.aspectRatio = `${W} / ${H}`;
+
+  state.rect = null;
+}
+
+$('aspectRatio').addEventListener('change', (e) => {
+  resizeCanvasForRatio(e.target.value);
 });
 
 function setTool(t) { state.tool = t; $('toolBrush').classList.toggle('is-active', t === 'brush'); $('toolEraser').classList.toggle('is-active', t === 'eraser'); $('toolBrush').setAttribute('aria-pressed', t === 'brush'); $('toolEraser').setAttribute('aria-pressed', t === 'eraser'); }
@@ -88,17 +156,14 @@ function flushDrawQueue() {
     state.drawFrame = 0;
   }
 
-  if (!state.pendingPoints.length || !state.drawing) {
+  if (!state.drawing || !state.last) {
     state.pendingPoints = [];
     return;
   }
 
-  ctx.stroke();
-}
+  const points = state.pendingPoints.splice(0);
 
-
-  const points = state.pendingPoints;
-  state.pendingPoints = [];
+  if (!points.length) return;
 
   for (const q of points) {
     const m = {
@@ -108,17 +173,20 @@ function flushDrawQueue() {
 
     ctx.beginPath();
     ctx.moveTo(state.mid.x, state.mid.y);
+
     ctx.quadraticCurveTo(
       state.last.x,
       state.last.y,
       m.x,
       m.y
     );
+
     ctx.stroke();
 
     state.last = q;
     state.mid = m;
   }
+}
 
 function scheduleDraw() {
   if (state.drawFrame) return;
@@ -127,9 +195,13 @@ function scheduleDraw() {
 }
 
 draw.addEventListener('pointerdown', (e) => {
+  console.log('[YANTRA] POINTER DOWN:', e.clientX, e.clientY);
   if (e.button !== 0 && e.pointerType === 'mouse') return;
-  state.rect = draw.getBoundingClientRect();
+
   e.preventDefault();
+
+  state.rect = draw.getBoundingClientRect();
+
   draw.setPointerCapture(e.pointerId);
 
   pushUndo();
@@ -143,48 +215,66 @@ draw.addEventListener('pointerdown', (e) => {
   state.pendingPoints = [];
 
   ctx.beginPath();
-  ctx.arc(p.x, p.y, ctx.lineWidth / 2, 0, Math.PI * 2);
+  ctx.arc(
+    p.x,
+    p.y,
+    ctx.lineWidth / 2,
+    0,
+    Math.PI * 2
+  );
   ctx.fill();
 });
 
 draw.addEventListener('pointermove', (e) => {
-  const r = state.rect || draw.getBoundingClientRect();
+  const r = draw.getBoundingClientRect();
   const p = pos(e, r);
 
-  // Update cursor only when not drawing
-const c = $('cursor');
-const d = (+size.value / W) * r.width;
+  // Smooth brush cursor
+  const c = $('cursor');
+  const d = (+size.value / W) * r.width;
 
-c.style.width = c.style.height = `${d}px`;
-c.style.transform =
-  `translate(${p.x / W * r.width - d / 2}px, ${p.y / H * r.height - d / 2}px)`;
+  c.style.width = `${d}px`;
+  c.style.height = `${d}px`;
+  c.style.transform =
+    `translate(${p.x / W * r.width - d / 2}px, ${p.y / H * r.height - d / 2}px)`;
 
-  if (!state.drawing || !state.last) return;
+  if (!state.drawing) return;
 
+  // Firefox-safe pointer events fallback
   const events = e.getCoalescedEvents?.();
   const points = events?.length ? events : [e];
 
-  ctx.beginPath();
-  ctx.moveTo(state.last.x, state.last.y);
-
   for (const ev of points) {
     const q = pos(ev, r);
-    ctx.lineTo(q.x, q.y);
-    state.last = { x: q.x, y: q.y };
+
+    state.pendingPoints.push({
+      x: q.x,
+      y: q.y
+    });
   }
 
-  ctx.stroke();
+  scheduleDraw();
 });
-const end = () => {
+
+function end(e) {
+  if (!state.drawing) return;
+
   flushDrawQueue();
+
   state.drawing = false;
   state.last = null;
   state.mid = null;
-};
+  state.pendingPoints = [];
+
+  if (e?.pointerId != null && draw.hasPointerCapture(e.pointerId)) {
+    draw.releasePointerCapture(e.pointerId);
+  }
+}
 
 ['pointerup', 'pointercancel', 'lostpointercapture'].forEach((event) => {
   draw.addEventListener(event, end);
 });
+
 
 /* ---------- image upload ---------- */
 const dz = $('dropzone');
@@ -217,7 +307,7 @@ function pickStyle(id) { state.style = id; $('styleGrid').querySelectorAll('.p2i
 $('styleGrid').addEventListener('click', (e) => { const b = e.target.closest('[data-style]'); if (b) pickStyle(b.dataset.style); });
 $('influence').addEventListener('input', (e) => { $('influenceVal').textContent = `${e.target.value}%`; refreshPayload(); });
 const SKETCH_STUB = { name: 'sketch.png', size: 0 };
-function refreshPayload() { $('payloadPre').textContent = JSON.stringify(describeRequest({ prompt: prompt.value.trim() || '(empty)', style: state.style, reference: SKETCH_STUB, influence: +$('influence').value }), null, 2).replace('"sketch.png (0 KB)"', '"sketch.png (canvas export, PNG)"'); }
+function refreshPayload() { $('payloadPre').textContent = JSON.stringify(describeRequest({ prompt: prompt.value.trim() || '(empty)', style: state.style, reference: SKETCH_STUB, influence: +$('influence').value, aspectRatio: state.aspectRatio }), null, 2).replace('"sketch.png (0 KB)"', '"sketch.png (canvas export, PNG)"'); }
 
 /* ---------- stage ---------- */
 const card = $('stageCard'), panes = { empty: $('stEmpty'), loading: $('stLoading'), result: $('stResult'), notice: $('stNotice') };
@@ -255,7 +345,7 @@ $('form').addEventListener('submit', async (e) => {
   if (innerWidth <= 1100) card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
   try {
     const blob = await exportSketch();
-    const out = await generateImage({ prompt: text, style: state.style, reference: new File([blob], 'sketch.png', { type: 'image/png' }), influence: +$('influence').value, generationMode: 'sketch',signal: state.abort.signal ,});
+    const out = await generateImage({ prompt: text, style: state.style, reference: new File([blob], 'sketch.png', { type: 'image/png' }), influence: +$('influence').value, aspectRatio: state.aspectRatio, generationMode: 'sketch',signal: state.abort.signal ,});
     const img = $('resultImg');
     await new Promise((r) => { img.onload = r; img.onerror = r; img.src = out.url; });
     if (!img.naturalWidth) throw new Error('The backend returned something that is not a readable image.');
