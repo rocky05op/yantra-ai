@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YANTRA — Pattern Studio</title>
+  <meta name="description" content="Real-time sacred geometric pattern generator." />
+  <meta name="theme-color" content="#060311" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <script>document.documentElement.classList.add('js');</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/src/css/base.css" />
+  <link rel="stylesheet" href="/src/css/studio.css" />
+</head>
+<body data-page="pattern">
+  <div id="nav-root"></div>
+
+  <main class="page has-nav studio-page">
+    <header class="studio-head">
+      <div>
+        <span class="eyebrow"><i data-icon="hexagon" data-size="15"></i> Pattern Studio</span>
+        <h1 class="display">Sacred geometry, <em class="gradient-text">alive</em></h1>
+      </div>
+      <div class="head-tools" role="toolbar" aria-label="History">
+        <button class="btn-icon" id="autoSaveToggle" type="button" title="Auto-save your settings in this browser" aria-pressed="true" aria-label="Auto-save"><i data-icon="save" data-size="19"></i></button>
+        <button class="btn-icon" id="undoBtn" type="button" title="Undo (Ctrl+Z)" aria-label="Undo"><i data-icon="undo" data-size="19"></i></button>
+        <button class="btn-icon" id="redoBtn" type="button" title="Redo (Ctrl+Y)" aria-label="Redo"><i data-icon="redo" data-size="19"></i></button>
+      </div>
+    </header>
+
+    <div class="studio">
+      <!-- Left: controls -->
+      <aside class="panel glass control-panel" aria-label="Pattern controls">
+        <h2 class="panel-title"><i data-icon="sliders" data-size="18"></i> Pattern Controls</h2>
+
+        <div class="field"><label for="layersSlider">Layers <span class="val" id="layersValue">6</span></label>
+          <input type="range" id="layersSlider" min="1" max="12" value="6" /></div>
+        <div class="field"><label for="rotationSlider">Rotation <span class="val" id="rotationValue">0°</span></label>
+          <input type="range" id="rotationSlider" min="0" max="360" value="0" /></div>
+        <div class="field"><label for="symmetrySlider">Symmetry <span class="val" id="symmetryValue">6</span></label>
+          <input type="range" id="symmetrySlider" min="2" max="12" value="6" /></div>
+        <div class="field"><label for="scaleSlider">Scale <span class="val" id="scaleValue">1.0x</span></label>
+          <input type="range" id="scaleSlider" min="0.5" max="2" step="0.1" value="1" /></div>
+        <div class="field"><label for="speedSlider">Animation speed <span class="val" id="speedValue">50%</span></label>
+          <input type="range" id="speedSlider" min="0" max="100" value="50" /></div>
+
+        <label class="switch"><input type="checkbox" id="animationToggle" checked /><span class="track"></span> Enable animation</label>
+        <button class="btn btn-block" id="resetBtn" type="button"><i data-icon="reset" data-size="18"></i> Reset to default</button>
+
+        <h2 class="panel-title"><i data-icon="palette" data-size="18"></i> Color Theme</h2>
+        <div class="swatches" role="radiogroup" aria-label="Colour theme">
+          <button class="color-preset active" data-theme="lavender" title="Lavender" aria-label="Lavender" role="radio" aria-checked="true" style="--a:#b19cd9;--b:#7851a9"></button>
+          <button class="color-preset" data-theme="cosmic" title="Cosmic" aria-label="Cosmic" role="radio" aria-checked="false" style="--a:#ff006e;--b:#8338ec"></button>
+          <button class="color-preset" data-theme="ocean" title="Ocean" aria-label="Ocean" role="radio" aria-checked="false" style="--a:#00d9ff;--b:#0066cc"></button>
+          <button class="color-preset" data-theme="sunset" title="Sunset" aria-label="Sunset" role="radio" aria-checked="false" style="--a:#ff6b35;--b:#f7931e"></button>
+          <button class="color-preset" data-theme="forest" title="Forest" aria-label="Forest" role="radio" aria-checked="false" style="--a:#06a77d;--b:#2d6a4f"></button>
+          <button class="color-preset" data-theme="sakura" title="Sakura" aria-label="Sakura" role="radio" aria-checked="false" style="--a:#ff69b4;--b:#ff1493"></button>
+        </div>
+        <div class="row"><label for="colorInput" class="label">Custom colour</label><input type="color" id="colorInput" value="#b19cd9" /></div>
+      </aside>
+
+      <!-- Centre: canvas -->
+      <section class="stage" aria-label="Pattern canvas">
+        <div class="canvas-container glass glow-border">
+          <canvas id="yantracCanvas" aria-label="Generated yantra pattern" role="img"></canvas>
+          <p class="canvas-hint">Adjust the controls to shape your pattern</p>
+        </div>
+        <div class="canvas-actions">
+          <button class="btn btn-primary" id="downloadBtn" type="button" data-magnetic><i data-icon="download" data-size="18"></i> Download PNG</button>
+          <button class="btn" id="saveBtn" type="button"><i data-icon="folder" data-size="18"></i> Save to gallery</button>
+          <button class="btn" id="shareBtn" type="button"><i data-icon="share" data-size="18"></i> Share</button>
+          <button class="btn" id="randomBtn" type="button"><i data-icon="dice" data-size="18"></i> Random</button>
+        </div>
+      </section>
+
+      <!-- Right: preview / info / presets -->
+      <aside class="panel glass side-panel" aria-label="Preview and info">
+        <h2 class="panel-title"><i data-icon="eye" data-size="18"></i> Preview</h2>
+        <div class="preview-box"><canvas id="previewCanvas" width="200" height="200" aria-label="Pattern preview" role="img"></canvas></div>
+
+        <h2 class="panel-title"><i data-icon="info" data-size="18"></i> Pattern Info</h2>
+        <dl class="info">
+          <div><dt>Canvas</dt><dd id="infoResolution">—</dd></div>
+          <div><dt>Layers</dt><dd id="infoLayers">6</dd></div>
+          <div><dt>Symmetry</dt><dd id="infoSymmetry">6-fold</dd></div>
+          <div><dt>Theme</dt><dd id="infoTheme">Lavender</dd></div>
+        </dl>
+
+        <h2 class="panel-title"><i data-icon="layers" data-size="18"></i> Presets</h2>
+        <div class="presets">
+          <button class="preset-btn chip" data-preset="mandala" type="button">Mandala</button>
+          <button class="preset-btn chip" data-preset="flower" type="button">Flower</button>
+          <button class="preset-btn chip" data-preset="geometric" type="button">Geometric</button>
+          <button class="preset-btn chip" data-preset="spiral" type="button">Spiral</button>
+          <button class="preset-btn chip" data-preset="kaleidoscope" type="button">Kaleidoscope</button>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <script type="module" src="/src/js/pages/pattern.js"></script>
+</body>
+</html>
